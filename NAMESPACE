@@ -1,0 +1,28 @@
+useDynLib(sentinel, .registration = TRUE)
+
+export(area, as.POLYGON, buildPOLYGON, clearXMLcache,
+       downloadProducts, getFootprint, getUTMhemisphere, getUTMzone,
+       getUTMzone2, lonlat2ECEF, lonlat2UTM, overlap,
+       overviewSearchCopernicus, pkm, rose, searchCopernicus,
+       summarySearchCopernicus, UTM2lonlat, wl2rgb)
+
+importFrom(graphics, axis, box, locator, polygon, strwidth, text)
+importFrom(grDevices, chull, rgb)
+importFrom(stats, kmeans)
+importFrom(utils, read.csv, read.delim)
+importFrom(maps, map)
+importFrom(PBSmapping, as.PolySet, joinPolys)
+importFrom(sp, CRS, SpatialPoints, "coordinates<-", "proj4string<-",
+           spTransform)
+
+S3method("[", footprint)
+S3method(plot, footprint)
+S3method(print, footprint)
+S3method(plot, POLYGON)
+S3method(print, POLYGON)
+
+
+
+
+
+
