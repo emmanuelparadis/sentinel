@@ -1,4 +1,4 @@
-/* kmeans_dnorm.c    2021-03-05 */
+/* kmeans_dnorm.c    2021-03-30 */
 
 /* Copyright 2021 Emmanuel Paradis */
 
@@ -14,6 +14,8 @@ SEXP C_kmeans_dnorm(SEXP X, SEXP cluster0, SEXP Nclusters, SEXP threshold, SEXP 
     int n, p, i, j, k, l, *cls, *post, K, Nreclass, loop, *N, whichmax, iter_lim;
     double *x, *MEANS, *SD, d, maxdensity, newdensity, thres;
     SEXP res;
+
+    double *TERM1, *TwoVAR;
 
     PROTECT(X = coerceVector(X, REALSXP));
     PROTECT(cluster0 = coerceVector(cluster0, INTSXP));
@@ -34,6 +36,8 @@ SEXP C_kmeans_dnorm(SEXP X, SEXP cluster0, SEXP Nclusters, SEXP threshold, SEXP 
 
     MEANS = (double*)R_alloc(p * K, sizeof(double));
     SD = (double*)R_alloc(p * K, sizeof(double));
+    TwoVAR = (double*)R_alloc(p * K, sizeof(double));
+    TERM1 = (double*)R_alloc(K, sizeof(double));
     N = (int*)R_alloc(K, sizeof(int));
 
     loop = 0;
@@ -45,7 +49,6 @@ SEXP C_kmeans_dnorm(SEXP X, SEXP cluster0, SEXP Nclusters, SEXP threshold, SEXP 
 	    break;
 	}
 	Rprintf("iteration %d ", loop);
-
 	/* compute the means and SDs */
 	memset(MEANS, 0, p * K * sizeof(double));
 	memset(SD, 0, p * K * sizeof(double));
@@ -71,21 +74,36 @@ SEXP C_kmeans_dnorm(SEXP X, SEXP cluster0, SEXP Nclusters, SEXP threshold, SEXP 
 	for (j = 0; j < p; j++) {
 	    for (k = 0; k < K; k++) {
 		l = j + k * p;
-		SD[l] = sqrt(SD[l] / (N[k] - 1));
+		d = SD[l] / (N[k] - 1);
+		TwoVAR[l] = 2 * d;
+		SD[l] = sqrt(d);
+	    }
+	}
+
+	for (k = 0; k < K; k++) {
+	    TERM1[k] = -M_LN_SQRT_2PI;
+	    for (j = 0; j < p; j++) {
+		l = j + k * p;
+		TERM1[k] -= log(SD[l]);
 	    }
 	}
 
 	for (i = 0; i < n; i++) {
-	    maxdensity = 0;
-	    for (j = 0; j < p; j++)
-		maxdensity += dnorm(x[i + j * n], MEANS[j], SD[j], 1); /* k = 0 */
+	    maxdensity = 0; /* k = 0 to start*/
+	    for (j = 0; j < p; j++) {
+		d = x[i + j * n] - MEANS[j]; // x_i - mu
+		maxdensity -= (d * d) / TwoVAR[j]; // (x_i - mu)^2 / (2 sigma^2)
+	    }
+	    maxdensity += TERM1[0];
 	    whichmax = 0; /* k */
 	    for (k = 1; k < K; k++) {
 		newdensity = 0;
 		for (j = 0; j < p; j++) {
 		    l = j + k * p;
-		    newdensity += dnorm(x[i + j * n], MEANS[l], SD[l], 1);
+		    d = x[i + j * n] - MEANS[l];
+		    newdensity -= (d * d) / TwoVAR[l];
 		}
+		newdensity += TERM1[k];
 		if (newdensity > maxdensity) {
 		    maxdensity = newdensity;
 		    whichmax = k;
@@ -101,12 +119,12 @@ SEXP C_kmeans_dnorm(SEXP X, SEXP cluster0, SEXP Nclusters, SEXP threshold, SEXP 
 	    }
 	}
 	if (!Nreclass) {
-	    Rprintf(" -> 0 pixel reclassified\n");
+	    Rprintf(" -> 0 reclassified\n");
 	    break;
 	}
-	Rprintf("-> %d pixels reclassified\n", Nreclass);
+	Rprintf("-> %d reclassified\n", Nreclass);
 	if ((double) Nreclass / n < thres) {
-	    Rprintf("Less than %f%% pixels reclassified: stopping here.\n", 100 * thres);
+	    Rprintf("Less than %f%% reclassified: stopping here.\n", 100 * thres);
 	    break;
 	}
     }
