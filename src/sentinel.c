@@ -1,4 +1,4 @@
-/* sentinel.c    2021-03-05 */
+/* sentinel.c    2021-09-03 */
 
 /* Copyright 2021 Emmanuel Paradis */
 
@@ -15,7 +15,7 @@ void aggregate_10to20(int *x, int *nr, int *nc, int *res);
 void aggregate_20to60(int *x, int *nr, int *nc, int *res);
 void aggregate_10to60_with_var(int *x, int *nr, int *nc, double *res, double *var);
 void aggregate_20to60_with_var(int *x, int *nr, int *nc, double *res, double *var);
-SEXP C_kmeans_dnorm(SEXP X, SEXP cluster0, SEXP Nclusters, SEXP threshold, SEXP iterlim);
+SEXP C_kmeans_dnorm(SEXP X, SEXP cluster0, SEXP PARA);
 
 static R_CMethodDef C_entries[] = {
     {"aggregate_10to60", (DL_FUNC) &aggregate_10to60, 4},
@@ -27,7 +27,7 @@ static R_CMethodDef C_entries[] = {
 };
 
 static R_CallMethodDef Call_entries[] = {
-    {"C_kmeans_dnorm", (DL_FUNC) &C_kmeans_dnorm, 5},
+    {"C_kmeans_dnorm", (DL_FUNC) &C_kmeans_dnorm, 3},
     {NULL, NULL, 0}
 };
 

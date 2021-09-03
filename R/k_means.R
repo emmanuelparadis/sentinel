@@ -1,4 +1,4 @@
-## k_means.R (2021-03-05)
+## k_means.R (2021-09-03)
 
 ##   Conversion Coordinates
 
@@ -7,17 +7,10 @@
 ## This file is part of the R-package `sentinel'.
 ## See the file ../COPYING for licensing issues.
 
-pkm <- function(x, K, threshold = 0, iterlimit = 200)
+pkm <- function(x, cls, K, threshold = 1e-5, iter.lim = 200, quiet = FALSE)
 {
-    nK <- length(K)
-    if (nK == 1) {
-        K <- as.integer(K)
-        cls0 <- kmeans(x, K, trace = TRUE)$cluster
-    } else {
-        if (nrow(x) != nK)
-            stop("number of values in 'K' should be equal to number of observations")
-        cls0 <- as.integer(K)
-        K <- nK
-    }
-    .Call(C_kmeans_dnorm, x, cls0, K, threshold, as.integer(iterlimit))
+    if (length(cls) != nrow(x))
+        stop("number of values in 'cls' not equal to numeber of rows in 'x'")
+    PARA <- as.integer(c(K, threshold * length(cls), iter.lim, quiet))
+    .Call(C_kmeans_dnorm, x, cls, PARA)
 }

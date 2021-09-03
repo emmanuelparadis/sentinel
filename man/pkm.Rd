@@ -6,30 +6,25 @@
   heterogeneous variance among groups.
 }
 \usage{
-pkm(x, K, threshold = 0, iterlimit = 200)
+pkm(x, cls, K, threshold = 1e-5, iter.lim = 200, quiet = FALSE)
 }
 \arguments{
   \item{x}{a numeric matrix.}
-  \item{K}{an integer giving the number of groups (or clusters), or a
-    vector of integers giving initial assignments; see details.}
+  \item{cls}{a vector of class membership for each observation in
+    \code{x} (e.g., output from \code{kmeans}).}
+  \item{K}{an integer giving the number of groups (or clusters); should
+    be equal to \code{length(unique(cls))}.}
   \item{threshold}{a value less than one; see details.}
-  \item{iterlimit}{an integer giving the maximum number of iterations.}
+  \item{iter.lim}{an integer giving the maximum number of iterations.}
+  \item{quiet}{a logical value specifying whether the progress of the
+    computations should be printed or not.}
 }
 \details{
-  If \code{K} is a single value, it is interpreted as the number of
-  groups. In that case, a standard k-means is first performed to provide
-  initial assignments before calling the probabilistic algorithm. If
-  \code{K} has length greater than one, it is taken as a vector of
-  initial assignments. In that case, its length must be equal to the
-  number of rows in \code{x}.
-
-  At each iteration, the number of reclassified observations is
-  printed.
-
-  The iterations are stopped after either \code{iterlimit} iterations,
+  The iterations are stopped after either \code{iter.lim} iterations,
   or after a proportion less than \code{threshold} observations are
   reclassified (e.g., if \code{threshold = 0.01}, the procedure is
-  stopped when less than 1\% of observations are reclassified.
+  stopped when less than 1\% of observations are reclassified (the
+  default is 0.001\%).
 }
 \value{a vector of integers giving the final group assignments.}
 \author{Emmanel Paradis}
@@ -47,7 +42,7 @@ km <- kmeans(X, 2) # standard k-means
 cls <- km$cluster
 table(g, cls)
 
-cls2 <- pkm(X, 2) # probabilistic k-means
+cls2 <- pkm(X, cls, 2) # probabilistic k-means
 table(cls2, g)
 }
 \keyword{models}
