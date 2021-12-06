@@ -1,12 +1,18 @@
 \name{pkm}
 \alias{pkm}
+\alias{skm}
 \title{Probabilistic K-Means}
 \description{
   Implements a probabilistic k-means method under a normal model with
   heterogeneous variance among groups.
+
+  \code{skm} is a wrapper for the standard k-means function in the
+  \pkg{stats} package so the interface is similar to \code{pkm} and
+  makes comparisons easier.
 }
 \usage{
 pkm(x, cls, K, threshold = 1e-5, iter.lim = 200, quiet = FALSE)
+skm(x, cls, K, algorithm = "Hartigan-Wong", iter.lim = 10, quiet = FALSE)
 }
 \arguments{
   \item{x}{a numeric matrix.}
@@ -18,6 +24,10 @@ pkm(x, cls, K, threshold = 1e-5, iter.lim = 200, quiet = FALSE)
   \item{iter.lim}{an integer giving the maximum number of iterations.}
   \item{quiet}{a logical value specifying whether the progress of the
     computations should be printed or not.}
+  \item{algorithm}{the algorithm used in the standard k-means: one of
+    "Hartigan-Wong", "Lloyd", "Forgy", or "MacQueen" (it is recommended to
+    leave the default). The second and third choices are alternative
+    names for the same algorithm.}
 }
 \details{
   The iterations are stopped after either \code{iter.lim} iterations,
@@ -38,8 +48,7 @@ x2 <- rnorm(n, 6, .5) # ~ N(6, 0.5)
 g <- gl(2, n) # the actual groups are known
 
 X <- c(x1, x2) # combine the data in a single vector
-km <- kmeans(X, 2) # standard k-means
-cls <- km$cluster
+cls <- skm(X, K = 2) # standard k-means
 table(g, cls)
 
 cls2 <- pkm(X, cls, 2) # probabilistic k-means
