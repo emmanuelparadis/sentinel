@@ -9,7 +9,7 @@ lonlat2ECEF(lon, lat = NULL, alt = 0, as.matrix = FALSE)
 }
 \arguments{
   \item{lon, lat}{coordinates given as two vectors or as a matrix (or
-    data frame).}
+    a data frame).}
   \item{alt}{a vector of altitudes.}
   \item{as.matrix}{a logical value specifying whether to return the
     results in a matrix. The default is to return them in a list.}

@@ -1,8 +1,8 @@
-## utils.R (2021-01-18)
+## utils.R (2022-05-25)
 
 ##   Utilities for Sentinel and GIS data
 
-## Copyright 2021 Emmanuel Paradis
+## Copyright 2021-2022 Emmanuel Paradis
 
 ## This file is part of the R-package `sentinel'.
 ## See the file ../COPYING for licensing issues.
@@ -42,58 +42,6 @@ area <- function(x, y = NULL)
     abs(res) / 2
 }
 
-## from https://gist.github.com/friendly/67a7df339aa999e2bcfcfec88311abfc
-## vectorized and object renamed (x: vector of wavelengths in nanometer)
-wl2rgb <- function(x, gamma = 0.8)
-{
-    R <- G <- B <- rep(0, length(x))
-
-    s <- x >= 380 & x <= 440
-    if (any(s)) {
-        attenuation <- 0.3 + 0.7 * (x[s] - 380) / (440 - 380)
-        R[s] <- ((-(x[s] - 440) / (440 - 380)) * attenuation) ^ gamma
-        G[s] <- 0
-        B[s] <- attenuation ^ gamma
-    }
-
-    s <- x >= 440 & x <= 490
-    if (any(s)) {
-        R[s] <- 0
-        G[s] <- ((x[s] - 440) / (490 - 440)) ^ gamma
-        B[s] <- 1
-    }
-
-    s <- x >= 490 & x <= 510
-    if (any(s)) {
-        R[s] <- 0
-        G[s] <- 1
-        B[s] <- (-(x[s] - 510) / (510 - 490)) ^ gamma
-    }
-
-    s <- x >= 510 & x <= 580
-    if (any(s)) {
-        R[s] <- ((x[s] - 510) / (580 - 510)) ^ gamma
-        G[s] <- 1
-        B[s] <- 0
-    }
-
-    s <- x >= 580 & x <= 645
-    if (any(s)) {
-        R[s] <- 1
-        G[s] <- (-(x[s] - 645) / (645 - 580)) ^ gamma
-        B[s] <- 0
-    }
-
-    s <- x >= 645 & x <= 750
-    if (any(s)) {
-        attenuation <- 0.3 + 0.7 * (750 - x[s]) / (750 - 645)
-        R[s] <- attenuation ^ gamma
-        G[s] <- B[s] <- 0
-    }
-
-    rgb(floor(R * 255), floor(G * 255), floor(B * 255), maxColorValue = 255)
-}
-
 rose <- function(x, y, size = 1, width = size/4, cols = c("grey10", "white"),
                  labels = c("N", "S", "E", "W"), offset = 0, ...)
 {
@@ -114,4 +62,52 @@ rose <- function(x, y, size = 1, width = size/4, cols = c("grey10", "white"),
     yy <- c(y + size + off, y - size - off, y, y)
     text(xx, yy, labels, ...)
 
+}
+
+## Source: http://www.physics.sfasu.edu/astro/color/spectra.html
+wl2col <- function(x, gamma = 0.8, RGB = FALSE)
+{
+    out.of.range <- x < 380 | x > 780
+    flag <- any(out.of.range)
+    if (flag) {
+        w <- which(!out.of.range)
+        x <- x[w]
+    }
+    n <- as.integer(length(x))
+    o <- .Fortran(wltocol, as.double(x), n, as.double(gamma), numeric(3 * n))
+    res <- o[[4L]]
+    dim(res) <- c(n, 3L)
+    if (flag) {
+        tmp <- matrix(0, length(out.of.range), 3L)
+        tmp[w, ] <- res
+        res <- tmp
+    }
+    if (RGB) {
+        colnames(res) <- c("red", "green", "blue")
+        if (!is.null(names(x))) rownames(res) <- names(x)
+        return(res)
+    }
+    res <- rgb(res[, 1L], res[, 2L], res[, 3L])
+    if (!is.null(names(x))) rownames(res) <- names(x)
+    res
+}
+
+## Source: https://www.fourmilab.ch/documents/specrend/
+spectrum2col <- function(spec, RGB = FALSE, no.warn = TRUE, color.system = 3)
+{
+    if (length(spec) != 81)
+        stop("'spec' should have 81 values; see ?spectrum2col")
+    o <- .C(C_specrend, spec, numeric(1), numeric(1), numeric(1), integer(1),
+            as.integer(color.system))
+    if (!no.warn) {
+        if (o[[5]]) warning("computations were approximate")
+    }
+    if (RGB) return(c(red = o[[2]], green = o[[3]], blue = o[[4]]))
+    rgb(o[[2]], o[[3]], o[[4]])
+}
+
+BlackBodySpectrum <- function(x, Temp = 300)
+{
+    wlm <- x * 1e-9 # nm -> m
+    (3.74183e-16 * wlm^-5) / (exp(1.4388e-2 / (wlm * Temp)) - 1.0)
 }

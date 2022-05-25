@@ -6,7 +6,7 @@
 \alias{getUTMhemisphere}
 \title{Conversions of Coordinates}
 \description{
-  Handy functions to convert coordinates.
+  Functions to convert coordinates.
 }
 \usage{
 lonlat2UTM(lon, lat = NULL, details = FALSE)
@@ -18,7 +18,7 @@ getUTMhemisphere(lat)
 }
 \arguments{
   \item{lon, lat}{coordinates given as two vectors or as a matrix (or
-    data frame).}
+    a data frame).}
   \item{details}{a logical value indicating whether to return
     information on the UTM zones (see below).}
   \item{X}{a matrix or a data frame giving the UTM coordinates.}

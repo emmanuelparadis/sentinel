@@ -38,6 +38,12 @@ skm(x, cls, K, algorithm = "Hartigan-Wong", iter.lim = 10, quiet = FALSE)
 }
 \value{a vector of integers giving the final group assignments.}
 \author{Emmanel Paradis}
+\references{
+  Paradis, E. (2022) Probabilistic unsupervised classification for
+  large-scale analysis of spectral imaging data. \emph{International
+  Journal of Applied Earth Observations and Geoinformation}, \bold{107},
+  102675.
+}
 \seealso{\code{\link[stats]{kmeans}}}
 \examples{
 set.seed(20)

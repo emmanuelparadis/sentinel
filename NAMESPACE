@@ -1,10 +1,11 @@
 useDynLib(sentinel, .registration = TRUE)
 
-export(area, as.POLYGON, buildPOLYGON, clearXMLcache,
-       downloadProducts, getFootprint, getUTMhemisphere, getUTMzone,
-       getUTMzone2, lonlat2ECEF, lonlat2UTM, overlap,
-       overviewSearchCopernicus, pkm, rose, searchCopernicus, skm,
-       summarySearchCopernicus, UTM2lonlat, wl2rgb)
+export(area, as.POLYGON, BlackBodySpectrum, buildPOLYGON,
+       clearXMLcache, downloadProducts, getFootprint,
+       getUTMhemisphere, getUTMzone, getUTMzone2, lonlat2ECEF,
+       lonlat2UTM, overlap, overviewSearchCopernicus, pkm, rose,
+       searchCopernicus, skm, spectrum2col, summarySearchCopernicus,
+       UTM2lonlat, wl2col)
 
 importFrom(graphics, axis, box, locator, polygon, strwidth, text)
 importFrom(grDevices, chull, rgb)
