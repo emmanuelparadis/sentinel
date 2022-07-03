@@ -57,8 +57,15 @@ BlackBodySpectrum(x, Temp = 300)
 }
 \author{Emmanuel Paradis, John Walker, Dan Bruton}
 \references{
+  Bruton, D. (1996) Approximate RGB values for visible wavelengths.
   \url{http://www.physics.sfasu.edu/astro/color/spectra.html}
 
+  Planck, M. (1901) Ueber das Gesetz der Energieverteilung im
+  Normalspectrum. \emph{Annalen der Physik}, \bold{309},
+  553--563. (English translation:
+  \url{http://web.ihep.su/dbserv/compas/src/planck01/eng.pdf})
+
+  Walker, J. (1996) Color rendering of spectra.
   \url{https://www.fourmilab.ch/documents/specrend/}
 }
 \examples{
@@ -79,8 +86,10 @@ names(spec) <- seq(380, 780, 5)
 sapply(1:6, function(i) spectrum2col(spec, TRUE, color.system = i))
 
 WL <- 380:780
-plot(WL, BlackBodySpectrum(WL, 306), type = "l", xlab = "Wavelength (nm)",
-     ylab = expression("Emittance (W."*m^{-2}*")"), log = "")
+xlab <- "Wavelength (nm)"
+ylab <- expression("Emittance (W."*m^{-2}*")")
+plot(WL, BlackBodySpectrum(WL, 306), type = "l", xlab = xlab,
+     ylab =ylab, log = "")
 lines(WL, BlackBodySpectrum(WL, 303), lty = 2)
 legend("topleft", legend = paste(c(306, 303) - 273, "degrees C"), lty = 1:2)
 
@@ -91,5 +100,15 @@ spectrum2col(BlackBodySpectrum(wl, 310), TRUE)
 spectrum2col(BlackBodySpectrum(wl, 3100), TRUE)
 spectrum2col(BlackBodySpectrum(wl, 31000), TRUE)
 
+wl <- 10:1e5
+col <- wl2col(wl)
+plot(wl, BlackBodySpectrum(wl, 6000), "n", log = "xy", ylim = c(1, 1e14),
+     xaxs = "i", xlab = xlab, ylab = ylab)
+s <- col != "#000000" # do not show the black lines
+abline(v = wl[s], col = col[s])
+lines(wl, BlackBodySpectrum(wl, 300))
+lines(wl, BlackBodySpectrum(wl, 3000))
+lines(wl, BlackBodySpectrum(wl, 6000))
+text(c(3000, 240, 200), c(5e6, 6e10, 5e13), paste(c(300, 3000, 6000), "K"))
 }
 \keyword{manip}

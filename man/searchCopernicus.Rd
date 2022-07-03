@@ -29,16 +29,16 @@ searchCopernicus(user, password, checkID = FALSE, ask = 1000,
 
   The downloaded XML files contain information on 100 products each, so
   the default value of \code{ask} is equivalent to download not more
-  than ten XML files without asking the user. Note that the first XML
+  than 10 XML files without asking the user. Note that the first XML
   file which contains the information on the number of found products
   is always downloaded.
 
   A search without argument (i.e., \code{searchCopernicus()} providing
   \code{user} and \code{password} have been set as explained above)
   returns information on all Sentinel products available on
-  Copernicus. As of today (2021-03-05), more than 35,700,000 products
+  Copernicus. As of today (2022-06-01), more than 50,100,000 products
   (with about one product added every minute). A full download will thus
-  get 357,000 files each about 370 KB in size (total around 132 GB).
+  get 510,000 files each about 370 KB in size (total around 189 GB).
 }
 \value{a data frame.}
 \author{Emmanuel Paradis}

@@ -1,6 +1,6 @@
-/* kmeans_dnorm.c    2021-09-03 */
+/* kmeans_dnorm.c    2022-07-01 */
 
-/* Copyright 2021 Emmanuel Paradis */
+/* Copyright 2021-2022 Emmanuel Paradis */
 
 /* This file is part of the R-package `sentinel'. */
 /* See the file ../COPYING for licensing issues. */
@@ -20,7 +20,7 @@ SEXP C_kmeans_dnorm(SEXP X, SEXP cluster0, SEXP PARA)
 
     double *TERM1, *TwoVAR;
 
-    unsigned char *no_update;
+    /* unsigned char *no_update; */
 
     /*
     Rprintf("sizeof(long double) = %d\n", sizeof(long double));
@@ -59,10 +59,10 @@ SEXP C_kmeans_dnorm(SEXP X, SEXP cluster0, SEXP PARA)
     TERM1 = (double*)R_alloc(K, sizeof(double));
     N = (int*)R_alloc(K, sizeof(int));
 
-    no_update = (unsigned char*)R_alloc(K, sizeof(unsigned char));
+    /* no_update = (unsigned char*)R_alloc(K, sizeof(unsigned char)); */
     /* initialise no_update with 0's, so the means and SDs will be
        calculated at the 1st loop */
-    memset(no_update, 0, K * sizeof(unsigned char));
+    /* memset(no_update, 0, K * sizeof(unsigned char)); */
 
     loop = 0;
 
@@ -81,7 +81,7 @@ SEXP C_kmeans_dnorm(SEXP X, SEXP cluster0, SEXP PARA)
 
 	/* initialiase only for the groups that need to */
 	for (k = 0; k < K; k++) {
-	    if (no_update[k]) continue;
+	    /* if (no_update[k]) continue; */
 	    N[k] = 0;
 	    kp = k * p;
 	    for (j = 0; j < p; j++) {
@@ -94,7 +94,7 @@ SEXP C_kmeans_dnorm(SEXP X, SEXP cluster0, SEXP PARA)
 	/* 1st, calculate the numbers and the sums */
 	for (i = 0; i < n; i++) {
 	    k = cls[i] - 1;
-	    if (no_update[k]) continue;
+	    /* if (no_update[k]) continue; */
 	    (N[k])++;
 	    kp = k * p;
 	    for (j = 0; j < p; j++)
@@ -102,14 +102,14 @@ SEXP C_kmeans_dnorm(SEXP X, SEXP cluster0, SEXP PARA)
 	}
 	/* then the means by their ratios */
 	for (k = 0; k < K; k++) {
-	    if (no_update[k]) continue;
+	    /* if (no_update[k]) continue; */
 	    kp = k * p;
 	    for (j = 0; j < p; j++) MEANS[j + kp] /= N[k];
 	}
 	/* 1st, calculate the sum of squared deviations to the mean */
 	for (i = 0; i < n; i++) {
 	    k = cls[i] - 1;
-	    if (no_update[k]) continue;
+	    /* if (no_update[k]) continue; */
 	    kp = k * p;
 	    for (j = 0; j < p; j++) {
 		l = j + kp;
@@ -119,7 +119,7 @@ SEXP C_kmeans_dnorm(SEXP X, SEXP cluster0, SEXP PARA)
 	}
 	/* then, the SD themselves, and store twice the variances for later */
 	for (k = 0; k < K; k++) {
-	    if (no_update[k]) continue;
+	    /* if (no_update[k]) continue; */
 	    kp = k * p;
 	    for (j = 0; j < p; j++) {
 		l = j + kp;
@@ -131,7 +131,7 @@ SEXP C_kmeans_dnorm(SEXP X, SEXP cluster0, SEXP PARA)
 
 	/* compute the 1st term of the log-density which is the same for all */
 	for (k = 0; k < K; k++) {
-	    if (no_update[k]) continue;
+	    /* if (no_update[k]) continue; */
 	    kp = k * p;
 	    TERM1[k] = -M_LN_SQRT_2PI;
 	    for (j = 0; j < p; j++) {
@@ -168,11 +168,11 @@ SEXP C_kmeans_dnorm(SEXP X, SEXP cluster0, SEXP PARA)
 	Nreclass = 0;
 	/* initialise no_update with 1's, so a priori no means and SDs
 	   will need to be recalculated */
-	for (k = 0; k < K; k++) no_update[k] = 1;
+	/* for (k = 0; k < K; k++) no_update[k] = 1; */
 	for (i = 0; i < n; i++) {
 	    k = post[i];
 	    if (cls[i] != k) {
-		no_update[cls[i]] = no_update[k] = 0;
+		/* no_update[cls[i]] = no_update[k] = 0; */
 		Nreclass++;
 		cls[i] = k;
 	    }

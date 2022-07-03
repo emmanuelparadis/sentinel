@@ -109,5 +109,5 @@ spectrum2col <- function(spec, RGB = FALSE, no.warn = TRUE, color.system = 3)
 BlackBodySpectrum <- function(x, Temp = 300)
 {
     wlm <- x * 1e-9 # nm -> m
-    (3.74183e-16 * wlm^-5) / (exp(1.4388e-2 / (wlm * Temp)) - 1.0)
+    (3.74183e-16 / wlm^5) / (exp(1.4388e-2 / (wlm * Temp)) - 1)
 }
