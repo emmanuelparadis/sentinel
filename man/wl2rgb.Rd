@@ -71,7 +71,7 @@ BlackBodySpectrum(x, Temp = 300)
 \examples{
 wl <- 370:790
 COLS <- c("red", "green", "blue")
-layout(matrix(1:3, 3))
+if (interactive()) layout(matrix(1:3, 3))
 matplot(wl, wl2col(wl, , TRUE), "l", col = COLS, lty = 1, lwd = 3)
 title("gamma = 0.8 (default)")
 matplot(wl, wl2col(wl, 1, TRUE), "l", col = COLS, lty = 1, lwd = 3)

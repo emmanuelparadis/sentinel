@@ -12,7 +12,8 @@ buildPOLYGON(bottomleftcorner, toprighcorner, interactive = FALSE,
              xlim = c(-180, 180), ylim = c(-90, 90))
 as.POLYGON(x, y = NULL)
 \method{print}{POLYGON}(x, \dots)
-\method{plot}{POLYGON}(x, add = FALSE, col = rgb(1, 1, 0, 0.25), xlim = NULL, ylim = NULL, \dots)
+\method{plot}{POLYGON}(x, add = FALSE, col = rgb(1, 1, 0, 0.25),
+     xlim = NULL, ylim = NULL, around = 1, \dots)
 }
 \arguments{
   \item{bottomleftcorner}{a numeric vector with two values giving the
@@ -27,6 +28,8 @@ as.POLYGON(x, y = NULL)
   \item{add}{a logical value specifying whether a make a new plot (the
     default), or add to an existing plot.}
   \item{col}{the color of the piolygon (by default: transparent yellow).}
+  \item{around}{the space left between the polygon and the borders of
+    the plot.}
   \item{\dots}{further arguments passed to and from methods.}
 }
 \details{

@@ -1,6 +1,6 @@
-/* aggregate_sentinel2.c    2021-03-05 */
+/* aggregate_sentinel2.c    2024-01-05 */
 
-/* Copyright 2021 Emmanuel Paradis */
+/* Copyright 2024 Emmanuel Paradis */
 
 /* This file is part of the R-package `sentinel'. */
 /* See the file ../COPYING for licensing issues. */
@@ -14,160 +14,79 @@
    aggregate_10to60_with_var: as above, also returns the variance for each cell
    aggregate_20to60_with_var: id. */
 
+/* Two functions to aggregate Sentinel-2 rasters
+   10m->20m and 10m->60m */
+
 #include <R.h>
+#include <Rinternals.h>
 
-void aggregate_10to60(int *x, int *nr, int *nc, int *res)
+void aggregate_10to60(double *x, double *res)
 {
-    int i, j, k = 0, i0 = 0, i1 = 5, j0 = 0, j1 = 5, last, s;
+    int i, j, k = 0, i0 = 0, i1 = 5, j0 = 0, j1 = 5, o;
+    double s;
 
-    last = nr[0] * nc[0] / 36;
-
-    while (k < last) {
+    for (;;) {
 	s = 0;
 	for (i = i0; i <= i1; i++) {
-	    for (j = j0; j <= j1; j++) {
-		s += x[j + i * nc[0]];
+	    o = i * 10980 + j0;
+	    for (j = j0; j <= j1; j++, o++) {
+		s += x[o];
 	    }
 	}
 	res[k] = s / 36;
+	k++;
+	if (k == 3348900) break;
 	j0 += 6;
 	j1 += 6;
-	if (j0 >= nc[0]) {
+	if (j0 >= 10980) {
 	    j0 = 0;
 	    j1 = 5;
 	    i0 += 6;
 	    i1 += 6;
 	}
-	k++;
     }
 }
 
-void aggregate_10to20(int *x, int *nr, int *nc, int *res)
+void aggregate_10to20(double *x, double *res)
 {
-    int i, j, k = 0, i0 = 0, i1 = 1, j0 = 0, j1 = 1, last, s;
+    int i, a = 0, b = 1, c = 10980, d = 10981;
 
-    last = nr[0] * nc[0] / 4;
-
-    while (k < last) {
-	s = 0;
-	for (i = i0; i <= i1; i++) {
-	    for (j = j0; j <= j1; j++) {
-		s += x[j + i * nc[0]];
-	    }
+    for (i = 0; i < 30140099; i++) {
+	res[i] = (x[a] + x[b] + x[c] + x[d]) / 4;
+	if (!(b % 10979)) {
+	    a += 10982;
+	    b = a + 1;
+	    c = a + 10980;
+	    d = c + 1;
+	} else {
+	    a += 2;
+	    b += 2;
+	    c += 2;
+	    d += 2;
 	}
-	res[k] = s / 4;
-	j0 += 2;
-	j1 += 2;
-	if (j0 >= nc[0]) {
-	    j0 = 0;
-	    j1 = 1;
-	    i0 += 2;
-	    i1 += 2;
-	}
-	k++;
     }
 }
 
-void aggregate_20to60(int *x, int *nr, int *nc, int *res)
+/* X: raster of dim 10980x10980
+   res: raster of dim 5490x5490 */
+SEXP aggregate_sen2_10to20(SEXP X)
 {
-    int i, j, k = 0, s, i0 = 0, i1 = 2, j0 = 0, j1 = 2, last;
-
-    last = nr[0] * nc[0] / 9;
-
-    while (k < last) {
-	s = 0;
-	for (i = i0; i <= i1; i++) {
-	    for (j = j0; j <= j1; j++) {
-		s += x[j + i * nc[0]];
-	    }
-	}
-	res[k] = s / 9;
-	j0 += 3;
-	j1 += 3;
-	if (j0 >= nc[0]) {
-	    j0 = 0;
-	    j1 = 2;
-	    i0 += 3;
-	    i1 += 3;
-	}
-	k++;
-    }
+    SEXP res;
+    PROTECT(X = coerceVector(X, REALSXP));
+    PROTECT(res = allocVector(REALSXP, 30140100));
+    aggregate_10to20(REAL(X), REAL(res));
+    UNPROTECT(2);
+    return res;
 }
 
-void aggregate_10to60_with_var(int *x, int *nr, int *nc, double *res, double *var)
+/* X: raster of dim 10980x10980
+   res: raster of dim 1830x1830 */
+SEXP aggregate_sen2_10to60(SEXP X)
 {
-    int i, j, k = 0, i0 = 0, i1 = 5, j0 = 0, j1 = 5, last;
-    double s, v, d;
-
-    last = nr[0] * nc[0] / 36;
-
-    while (k < last) {
-	s = 0;
-	v = 0;
-
-	for (i = i0; i <= i1; i++) {
-	    for (j = j0; j <= j1; j++) {
-		s += x[j + i * nc[0]];
-	    }
-	}
-	s /= 36;
-	res[k] = s;
-
-	for (i = i0; i <= i1; i++) {
-	    for (j = j0; j <= j1; j++) {
-		d = x[j + i * nc[0]] - s;
-		v += d * d;
-	    }
-	}
-	var[k] = v / 35;
-
-	j0 += 6;
-	j1 += 6;
-	if (j0 >= nc[0]) {
-	    j0 = 0;
-	    j1 = 5;
-	    i0 += 6;
-	    i1 += 6;
-	}
-	k++;
-    }
-}
-
-void aggregate_20to60_with_var(int *x, int *nr, int *nc, double *res, double *var)
-{
-    int i, j, k = 0, i0 = 0, i1 = 2, j0 = 0, j1 = 2, last;
-    double s, v, d;
-
-    last = nr[0] * nc[0] / 9;
-
-    while (k < last) {
-	s = 0;
-	v = 0;
-
-	for (i = i0; i <= i1; i++) {
-	    for (j = j0; j <= j1; j++) {
-		s += x[j + i * nc[0]];
-	    }
-	}
-	s /= 9;
-	res[k] = s;
-
-	for (i = i0; i <= i1; i++) {
-	    for (j = j0; j <= j1; j++) {
-		d = x[j + i * nc[0]] - s;
-		v += d * d;
-	    }
-	}
-	var[k] = v / 8;
-
-	j0 += 3;
-	j1 += 3;
-	if (j0 >= nc[0]) {
-	    j0 = 0;
-	    j1 = 2;
-	    i0 += 3;
-	    i1 += 3;
-	}
-	k++;
-    }
+    SEXP res;
+    PROTECT(X = coerceVector(X, REALSXP));
+    PROTECT(res = allocVector(REALSXP, 3348900));
+    aggregate_10to60(REAL(X), REAL(res));
+    UNPROTECT(2);
+    return res;
 }

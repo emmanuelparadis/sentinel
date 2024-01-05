@@ -35,7 +35,7 @@ getUTMhemisphere(lat)
   degrees North and longitude between 0 and 9 degrees East, and all
   latitudes for longitudes between 9 and 42 degrees East).
   \code{getUTMzone2} is a faster version that works only outside
-  these special zones. 
+  these special zones.
 }
 \value{
   the returned value depends on the function.

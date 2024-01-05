@@ -7,7 +7,7 @@
 \usage{
 searchCopernicus(user, password, checkID = FALSE, ask = 1000,
                  POLYGON = NULL, productType = NULL, quiet = FALSE,
-                 engine = "wget")
+                 engine = "wget", startDate = NULL, endDate = NULL)
 }
 \arguments{
   \item{user}{a character string.}
@@ -20,6 +20,10 @@ searchCopernicus(user, password, checkID = FALSE, ask = 1000,
   \item{productType}{a character string giving the product type(s).}
   \item{quiet}{a logical value.}
   \item{engine}{the program used to download the XML files.}
+  \item{startDate, endDate}{start and end (ingestion) dates for the
+    product search. These dates should be given in the ISO 8601 format
+    (e.g., \code{"2022-12-01"}). The default is to search without time
+    limits.}
 }
 \details{
   The user must be registered on Copernicus SciHub. If \code{checkID =

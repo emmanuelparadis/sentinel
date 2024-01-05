@@ -5,9 +5,8 @@
   Download Sentinel Products.
 }
 \usage{
-downloadProducts(user = user, password = password,
-        uuid, destdir = ".", wait = 60, engine = "wget")
-
+downloadProducts(user = user, password = password, uuid, destdir = ".",
+                 engine = "wget", logfile = NULL, quiet = FALSE)
 }
 \arguments{
   \item{user}{a character string.}
@@ -16,10 +15,10 @@ downloadProducts(user = user, password = password,
     to be downloaded.}
   \item{destdir}{the destination direction (as a character string). By
     default, the current working directory is used.}
-  \item{wait}{the number of minutes to wait between two successive
-    attemps to download a product from Copernicus's Long Term Archive
-    (LTA).}
   \item{engine}{the program used to download the files.}
+  \item{logfile}{file where the result for each product is written.}
+  \item{quiet}{a logical value specifying whether the progress of the
+    computations should be printed or not.}
 }
 \details{
   The values given to the argument \code{uuid} are found with the
@@ -27,11 +26,12 @@ downloadProducts(user = user, password = password,
 
   A query to download a product from the Long Term Archive (LTA)
   triggers the retrieval mechanism which takes a few hours be
-  effective. Thus, the next query of the same product is done after
-  waiting \code{wait} minutes to avoid too many queries on the
-  Copernicus's server.
+  effective.
 }
 \value{NULL}
 \author{Emmanuel Paradis}
-\seealso{\code{\link{searchCopernicus}}, \code{\link{summarySearchCopernicus}}}
+\seealso{
+  \code{\link{searchCopernicus}}, \code{\link{summarySearchCopernicus}},
+  \code{\link{downloadGcloud}}
+}
 \keyword{manip}

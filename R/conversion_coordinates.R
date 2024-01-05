@@ -1,8 +1,8 @@
-## conversion_coordinates.R (2020-10-19)
+## conversion_coordinates.R (2023-08-31)
 
 ##   Conversion Coordinates
 
-## Copyright 2020 Emmanuel Paradis
+## Copyright 2020-2023 Emmanuel Paradis
 
 ## This file is part of the R-package `sentinel'.
 ## See the file ../COPYING for licensing issues.
@@ -36,8 +36,8 @@ lonlat2UTM <- function(lon, lat = NULL, details = FALSE)
 {
     DF <- .check2cols(lon, lat)
     names(DF) <- c("x", "y")
-    class(DF) <- "data.frame"
-    DF$id <- seq_len(nrow(DF))
+    DF <- as.data.frame.list(DF, row.names = seq_along(DF$x))
+    DF$id <- row.names(DF)
     coordinates(DF) <- c("x", "y")
     hemisphere <- getUTMhemisphere(DF$y)
     zone <- getUTMzone(DF$x, DF$y)
@@ -59,7 +59,7 @@ lonlat2UTM <- function(lon, lat = NULL, details = FALSE)
         }
         res <- do.call(rbind, res)
     } else {
-        res <- .lonlat2utm(DF, crs)
+        res <- .lonlat2utm(DF, crs[1])
         if (details) {
             res$zone <- zone
             res$hemisphere <- hemisphere

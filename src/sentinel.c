@@ -1,6 +1,6 @@
-/* sentinel.c    2022-05-25 */
+/* sentinel.c    2024-01-05 */
 
-/* Copyright 2021-2022 Emmanuel Paradis */
+/* Copyright 2021-2024 Emmanuel Paradis */
 
 /* This file is part of the R-package `sentinel'. */
 /* See the file ../COPYING for licensing issues. */
@@ -12,27 +12,25 @@
 
 /* declare functions here to register them below */
 
-void aggregate_10to60(int *x, int *nr, int *nc, int *res);
-void aggregate_10to20(int *x, int *nr, int *nc, int *res);
-void aggregate_20to60(int *x, int *nr, int *nc, int *res);
-void aggregate_10to60_with_var(int *x, int *nr, int *nc, double *res, double *var);
-void aggregate_20to60_with_var(int *x, int *nr, int *nc, double *res, double *var);
 void C_specrend(double *spec_intens, double *R, double *G, double *B, int *approx, int *color_system);
-SEXP C_kmeans_dnorm(SEXP X, SEXP cluster0, SEXP PARA);
 int F77_NAME(wltocol)(double *WAVELEN, int *N, double *GAMMA, double *RES);
+SEXP fast2waytable_Call(SEXP X, SEXP Y, SEXP NCAT, SEXP TT);
+SEXP aggregate_sen2_10to20(SEXP X);
+SEXP aggregate_sen2_10to60(SEXP X);
+SEXP bilinear_interpolation_Call(SEXP raster, SEXP dims);
+SEXP Call_tabulate_sentinel(SEXP x);
 
 static R_CMethodDef C_entries[] = {
-    {"aggregate_10to60", (DL_FUNC) &aggregate_10to60, 4},
-    {"aggregate_10to20", (DL_FUNC) &aggregate_10to20, 4},
-    {"aggregate_20to60", (DL_FUNC) &aggregate_20to60, 4},
-    {"aggregate_10to60_with_var", (DL_FUNC) &aggregate_10to60_with_var, 5},
-    {"aggregate_20to60_with_var", (DL_FUNC) &aggregate_20to60_with_var, 5},
     {"C_specrend", (DL_FUNC) &C_specrend, 6},
     {NULL, NULL, 0}
 };
 
 static R_CallMethodDef Call_entries[] = {
-    {"C_kmeans_dnorm", (DL_FUNC) &C_kmeans_dnorm, 3},
+    {"fast2waytable_Call", (DL_FUNC) &fast2waytable_Call, 4},
+    {"aggregate_sen2_10to20", (DL_FUNC) &aggregate_sen2_10to20, 1},
+    {"aggregate_sen2_10to60", (DL_FUNC) &aggregate_sen2_10to60, 1},
+    {"bilinear_interpolation_Call", (DL_FUNC) &bilinear_interpolation_Call, 2},
+    {"Call_tabulate_sentinel", (DL_FUNC) &Call_tabulate_sentinel, 1},
     {NULL, NULL, 0}
 };
 

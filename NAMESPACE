@@ -1,29 +1,26 @@
 useDynLib(sentinel, .registration = TRUE)
 
-export(area, as.POLYGON, BlackBodySpectrum, buildPOLYGON,
-       clearXMLcache, downloadProducts, getFootprint,
-       getUTMhemisphere, getUTMzone, getUTMzone2, lonlat2ECEF,
-       lonlat2UTM, overlap, overviewSearchCopernicus, pkm, rose,
-       searchCopernicus, skm, spectrum2col, summarySearchCopernicus,
-       UTM2lonlat, wl2col)
+export(aggregateS2, as.POLYGON, axisMap, BlackBodySpectrum,
+       buildPOLYGON, clearXMLcache, downloadGcloud, downloadProducts,
+       fast2waytable, getFootprint, getUTMhemisphere, getUTMzone,
+       getUTMzone2, interpol, lonlat2ECEF, lonlat2UTM, overlap,
+       overviewSearchCopernicus, rose, searchCopernicus, spectrum2col,
+       summarySearchCopernicus, tabulateS2, UTM2lonlat, wl2col)
 
-importFrom(graphics, axis, box, locator, polygon, strwidth, text)
+importFrom(graphics, axis, box, locator, par, polygon, rect,
+           strwidth, text, xinch, yinch)
 importFrom(grDevices, chull, rgb)
-importFrom(stats, kmeans)
-importFrom(utils, read.csv, read.delim)
+importFrom(utils, read.csv, read.delim, tail)
 importFrom(maps, map)
-importFrom(PBSmapping, as.PolySet, joinPolys)
+importFrom(tigers, area, chullPolygon, convexPolygonOverlap,
+           is.clockwise, is.open, revPolygon)
 importFrom(sp, CRS, SpatialPoints, "coordinates<-", "proj4string<-",
            spTransform)
 
 S3method("[", footprint)
+S3method(lines, footprint)
 S3method(plot, footprint)
+S3method(points, footprint)
 S3method(print, footprint)
 S3method(plot, POLYGON)
 S3method(print, POLYGON)
-
-
-
-
-
-

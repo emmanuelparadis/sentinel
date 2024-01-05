@@ -26,4 +26,4 @@ rose(x, y, size = 1, width = size/4, cols = c("grey10", "white"),
   To not print the directions, set \code{labels = rep("", 4)}.
 }
 \author{Emmanuel Paradis}
-\keyword{manip}
+\keyword{aplot}
