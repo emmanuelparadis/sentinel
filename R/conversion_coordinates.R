@@ -1,8 +1,8 @@
-## conversion_coordinates.R (2023-08-31)
+## conversion_coordinates.R (2024-01-28)
 
 ##   Conversion Coordinates
 
-## Copyright 2020-2023 Emmanuel Paradis
+## Copyright 2020-2024 Emmanuel Paradis
 
 ## This file is part of the R-package `sentinel'.
 ## See the file ../COPYING for licensing issues.
@@ -78,13 +78,13 @@ UTM2lonlat <- function(X, zone, hemisphere)
     spTransform(XY, CRS("+init=epsg:4326"))
 }
 
-lonlat2ECEF <- function(lon, lat = NULL, alt = 0, as.matrix = FALSE)
+lonlat2ECEF <- function(lon, lat = NULL, alt = 0, as.matrix = TRUE)
 {
     xy <- .check2cols(lon, lat)
     lon <- xy[[1L]]
     lat <- xy[[2L]]
-    a <- 6378137 # equatorial radius in meters
-    b <- 6356752 # polar radius in meters
+    a <- 6378137 # equatorial radius (m)
+    b <- 6356752 # polar radius (m)
     b2a2 <- b^2/a^2
     e2 <- 1 - b2a2
     deg2rad <- pi/180
@@ -101,4 +101,14 @@ lonlat2ECEF <- function(lon, lat = NULL, alt = 0, as.matrix = FALSE)
     y <- (N + alt) * clat * slon
     z <- (b2a2 * N + alt) * slat
     if (as.matrix) cbind(x = x, y = y, z = z) else list(x = x, y = y, z = z)
+}
+
+ECEF2lonlat <- function(x, y = NULL, z = NULL)
+{
+    if (is.null(y) & is.null(z))
+        x <- cbind(x, y, z)
+    if (ncol(x) < 3) stop("'x' should have at least 3 columns")
+    res <- .Call(ECEF2lonlat_Call, x)
+    colnames(res) <- c("Lon", "Lat", "Alt")
+    res
 }

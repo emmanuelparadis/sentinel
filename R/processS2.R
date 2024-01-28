@@ -1,4 +1,4 @@
-## processS2.R (2024-01-05)
+## processS2.R (2024-01-09)
 
 ##   Process Sentinel-2 Raw Data
 
@@ -12,10 +12,18 @@ aggregateS2 <- function(x, finalreso = 60)
     if (!finalreso %in% c(20, 60))
         stop("'finalresolution' must be 20 or 60")
 
-    if (length(x) != 120560400)
-        stop("'x' seems to be of the wrong length (!= 120,560,400 pixels)")
+    n10m <- 120560400 # Nb pixels at 10-m resolution
+    n20m <- 30140100  #              20
 
-    if (finalreso == 20) .Call(aggregate_sen2_10to20, x) else .Call(aggregate_sen2_10to60, x)
+    n <- length(x)
+    if (!n %in% c(n10m, n20m))
+        stop("'x' seems to be of the wrong length")
+
+    if (finalreso == 20 && n == n10m) res <- .Call(aggregate_sen2_10to20, x)
+    if (finalreso == 60 && n == n10m) res <- .Call(aggregate_sen2_10to60, x)
+    if (finalreso == 60 && n == n20m) res <- .Call(aggregate_sen2_20to60, x)
+
+    res
 }
 
 interpol <- function(x)

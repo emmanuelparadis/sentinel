@@ -10,12 +10,10 @@
    aggregate_10to20: aggregate 4 10-m-resolution cells into a single
      20-m-resolution cell with their mean
    aggregate_20to60: aggregate 9 20-m-resolution cells into a single
-     60-m-resolution cell with their mean
-   aggregate_10to60_with_var: as above, also returns the variance for each cell
-   aggregate_20to60_with_var: id. */
+     60-m-resolution cell with their mean */
 
-/* Two functions to aggregate Sentinel-2 rasters
-   10m->20m and 10m->60m */
+/* Three functions to aggregate Sentinel-2 rasters
+   10m->20m, 10m->60m, 20m->60m */
 
 #include <R.h>
 #include <Rinternals.h>
@@ -29,9 +27,7 @@ void aggregate_10to60(double *x, double *res)
 	s = 0;
 	for (i = i0; i <= i1; i++) {
 	    o = i * 10980 + j0;
-	    for (j = j0; j <= j1; j++, o++) {
-		s += x[o];
-	    }
+	    for (j = j0; j <= j1; j++, o++) s += x[o];
 	}
 	res[k] = s / 36;
 	k++;
@@ -67,6 +63,31 @@ void aggregate_10to20(double *x, double *res)
     }
 }
 
+void aggregate_20to60(double *x, double *res)
+{
+    int i, j, k = 0, i0 = 0, i1 = 2, j0 = 0, j1 = 2, o;
+    double s;
+
+    for (;;) {
+	s = 0;
+	for (i = i0; i <= i1; i++) {
+	    o = i * 5490 + j0;
+	    for (j = j0; j <= j1; j++, o++) s += x[o];
+	}
+	res[k] = s / 9;
+	k++;
+	if (k == 3348900) break;
+	j0 += 3;
+	j1 += 3;
+	if (j0 >= 5490) {
+	    j0 = 0;
+	    j1 = 2;
+	    i0 += 3;
+	    i1 += 3;
+	}
+    }
+}
+
 /* X: raster of dim 10980x10980
    res: raster of dim 5490x5490 */
 SEXP aggregate_sen2_10to20(SEXP X)
@@ -87,6 +108,19 @@ SEXP aggregate_sen2_10to60(SEXP X)
     PROTECT(X = coerceVector(X, REALSXP));
     PROTECT(res = allocVector(REALSXP, 3348900));
     aggregate_10to60(REAL(X), REAL(res));
+    UNPROTECT(2);
+    return res;
+}
+
+
+/* X: raster of dim 5490x5490
+   res: raster of dim 1830x1830 */
+SEXP aggregate_sen2_20to60(SEXP X)
+{
+    SEXP res;
+    PROTECT(X = coerceVector(X, REALSXP));
+    PROTECT(res = allocVector(REALSXP, 3348900));
+    aggregate_20to60(REAL(X), REAL(res));
     UNPROTECT(2);
     return res;
 }

@@ -1,4 +1,4 @@
-## utils.R (2024-01-05)
+## utils.R (2024-01-18)
 
 ##   Utilities for Sentinel and GIS data
 
@@ -67,7 +67,8 @@ axisMap <- function(latitude = FALSE, width = 0.05, len = 1, cols = c("black", "
         half[at == 0] <- ""
         labels <- paste0(half, abs(at), "\u00b0")
     }
-    axis(side, at = at, labels = labels, las = 1, ...)
+    axis(side, at = at, labels = labels, las = 1,
+         pos = psr[ifelse(latitude, 1L, 3L)], ...)
     selcol <- FALSE
     if (latitude) {
         w <- xinch(width)

@@ -4,8 +4,8 @@
 \alias{tabulateS2}
 \title{Post-processing of Sentinel-2 Raw Data}
 \description{
-  \code{aggregateS2} aggregates Sentinel-2 data from 10-m resolution to
-  either 20-m or 60-m resolution.
+  \code{aggregateS2} aggregates Sentinel-2 data from 10-m ro 20-m
+  resolution to either 20-m or 60-m resolution.
 
   \code{interpol} does bilinear interpolation from 20-m-m resolution to
   10-m resolution.

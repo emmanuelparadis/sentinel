@@ -2,10 +2,11 @@ useDynLib(sentinel, .registration = TRUE)
 
 export(aggregateS2, as.POLYGON, axisMap, BlackBodySpectrum,
        buildPOLYGON, clearXMLcache, downloadGcloud, downloadProducts,
-       fast2waytable, getFootprint, getUTMhemisphere, getUTMzone,
-       getUTMzone2, interpol, lonlat2ECEF, lonlat2UTM, overlap,
-       overviewSearchCopernicus, rose, searchCopernicus, spectrum2col,
-       summarySearchCopernicus, tabulateS2, UTM2lonlat, wl2col)
+       ECEF2lonlat, fast2waytable, getFootprint, getUTMhemisphere,
+       getUTMzone, getUTMzone2, interpol, lonlat2ECEF, lonlat2UTM,
+       overlap, overviewSearchCopernicus, rose, searchCopernicus,
+       spectrum2col, summarySearchCopernicus, tabulateS2, UTM2lonlat,
+       wl2col)
 
 importFrom(graphics, axis, box, locator, par, polygon, rect,
            strwidth, text, xinch, yinch)
